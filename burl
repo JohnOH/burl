@@ -14,29 +14,33 @@ burl() {
 
     [[ $path == $host ]] && path=""
 
-    exec 3<>/dev/tcp/${host}/${HTTP_PORT}
+    if exec 3<>/dev/tcp/${host}/${HTTP_PORT}; then
 
-    printf "GET /${path} HTTP/1.1\r\nHost: ${host}\r\nUser-Agent: bURL/Bash ${BASH_VERSION}\r\n\r\n" >&3
+    	printf "GET /${path} HTTP/1.1\r\nHost: ${host}\r\nUser-Agent: bURL/Bash ${BASH_VERSION}\r\n\r\n" >&3
 
-    IFS=
-    while read -r -t 1 line 0<&3; do
-        line=${line//$'\r'}
+    	IFS=
+    	while read -r -t 1 line 0<&3; do
+        	line=${line//$'\r'}
 
-        if [[ ! -v headers_read && $INCLUDE_HEADERS -eq 0 ]]; then
-            [[ -z $line ]] && headers_read=yes
-            continue
-        fi
+        	if [[ ! -v headers_read && $INCLUDE_HEADERS -eq 0 ]]; then
+            	[[ -z $line ]] && headers_read=yes
+            	continue
+        	fi
 
-        echo "$line"
-    done
+        	echo "$line"
+    	done
 
-    exec 3<&-
+    	exec 3<&-
+    else
+    	exec 3<&-
+    	echo "`date "+%d/%m/%Y %X"` unable to connect: $host:$HTTP_PORT/${path}" 1>&2
+    	exit 1
+    fi
 }
 
 usage() {
     cat <<EOF
 Usage: $0 [options] URL
-
 Options:
   -h            display usage help
   -i            include the HTTP header in the output
