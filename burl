@@ -14,10 +14,8 @@ burl() {
 
     [[ $path == $host ]] && path=""
 
-    if exec 3<>/dev/tcp/${host}/${HTTP_PORT}; then
-
+	if [ exec 3<>/dev/tcp/${host}/${HTTP_PORT} ]; then
     	printf "GET /${path} HTTP/1.1\r\nHost: ${host}\r\nUser-Agent: bURL/Bash ${BASH_VERSION}\r\n\r\n" >&3
-
     	IFS=
     	while read -r -t 1 line 0<&3; do
         	line=${line//$'\r'}
