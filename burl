@@ -32,6 +32,7 @@ burl() {
     else
     	exec 3<&-
     	echo "`date "+%d/%m/%Y %X"` unable to connect: $host:$HTTP_PORT/${path}" 1>&2
+    	echo "`date "+%d/%m/%Y %X"` unable to connect: $host:$HTTP_PORT/${path}" 1>>burl.err
     	exit 1
     fi
 }
