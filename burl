@@ -14,12 +14,23 @@ burl() {
 
     [[ $path == $host ]] && path=""
 
+	counter=0;
+	
 	if exec 3<>/dev/tcp/${host}/${HTTP_PORT}; then
     	printf "GET /${path} HTTP/1.1\r\nHost: ${host}\r\nUser-Agent: bURL/Bash ${BASH_VERSION}\r\n\r\n" >&3
     	IFS=
     	while read -r -t 1 line 0<&3; do
+    		let counter++
         	line=${line//$'\r'}
-
+        	
+#			if [ "$counter" == "1" ]; then
+#				if [ "${line:0:12}" == "HTTP/1.1 200" ]; then
+#					break
+#				else
+#					echo "burl: $host:$HTTP_PORT/${path} ${line:0:12}" 1>&2
+#					echo "`date "+%d/%m/%Y %X"` $host:$HTTP_PORT/${path} ${line:0:12}" 1>> burl.err
+#				fi		
+#			fi
         	if [[ ! -v headers_read && $INCLUDE_HEADERS -eq 0 ]]; then
             	[[ -z $line ]] && headers_read=yes
             	continue
@@ -27,7 +38,6 @@ burl() {
 
         	echo "$line"
     	done
-
     	exec 3<&-
     else
     	exec 3<&-
