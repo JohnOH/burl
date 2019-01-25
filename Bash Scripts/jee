@@ -1,0 +1,13 @@
+#!/bin/bash
+#echo
+if [ $# -eq 0 ]; then 
+#    echo "No commands"
+    echo -e -n "123U" >> /tmp/RFxSerial.input
+else
+    echo -e -n  "$@" >> /tmp/RFxSerial.input
+fi
+tail /etc/heyu/RFxConsole.txt -n24
+#echo
+/usr/bin/log 10 &
+echo -e  "echo -e -n $@ >> /tmp/RFxSerial.input"
+

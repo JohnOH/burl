@@ -1,0 +1,7 @@
+#!/bin/bash
+if [ $# -ne 0 ]; then 
+#	echo "Sleep $@"
+	sleep "$@"
+fi
+tail /etc/heyu/RFxConsole.txt -n30
+
